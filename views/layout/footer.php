@@ -1,5 +1,4 @@
     </main>
-
     <footer class="footer">
       
     </footer>
