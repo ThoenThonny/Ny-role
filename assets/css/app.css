@@ -9,6 +9,15 @@
 }
 
 body{
+    background: white;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
     font-family: 'siemreap-Regular', sans-serif;    
     background-color: #f4f4f4;
     margin: 0;
