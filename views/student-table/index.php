@@ -81,8 +81,7 @@
     <!-- Main Content -->
     <div class="main">
 
-        <!-- Top row: title + print button -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="mb-3">
             <h3>Nat Sokphary</h3>
 
         </div>
@@ -106,12 +105,12 @@
 
                     <tbody>
                         <tr>
-                            <td>2</td>
+                            <td>1</td>
                             <td>spider</td>
                             <td>Male</td>
                             <td>123456789</td>
                             <td>100</td>
-                            <td>Web-frontend + React.js</td>
+                            <td>Web-backend</td>
                             <td>
                                 <button onclick="window.print()" class="btn btn-primary btn-print">
                                     🖨️ Print
@@ -119,11 +118,11 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>1</td>
+                            <td>2</td>
                             <td>Jonh</td>
-                            <td>Male</td>
-                            <td>123456789</td>
-                            <td>100</td>
+                            <td>Female</td>
+                            <td>098765432</td>
+                            <td>50</td>
                             <td>Web Design + React.js</td>
                             <td>
                                 <button onclick="window.print()" class="btn btn-primary btn-print">
@@ -133,27 +132,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <!-- Pagination -->
-                <!-- <nav class="mt-3">
-                    <ul class="pagination justify-content-end">
-                        <li class="page-item disabled">
-                            <a class="page-link">Previous</a>
-                        </li>
-                        <li class="page-item active">
-                            <a class="page-link">1</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link">Next</a>
-                        </li>
-                    </ul>
-                </nav> -->
-
             </div>
         </div>
 
