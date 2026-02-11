@@ -84,9 +84,7 @@
         <!-- Top row: title + print button -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Nat Sokphary</h3>
-            <button onclick="window.print()" class="btn btn-primary btn-print">
-                🖨️ Print
-            </button>
+
         </div>
 
         <!-- Table Card -->
@@ -102,10 +100,24 @@
                             <th>Tel</th>
                             <th>Score</th>
                             <th>Course</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
 
                     <tbody>
+                        <tr>
+                            <td>2</td>
+                            <td>spider</td>
+                            <td>Male</td>
+                            <td>123456789</td>
+                            <td>100</td>
+                            <td>Web-frontend + React.js</td>
+                            <td>
+                                <button onclick="window.print()" class="btn btn-primary btn-print">
+                                    🖨️ Print
+                                </button>
+                            </td>
+                        </tr>
                         <tr>
                             <td>1</td>
                             <td>Jonh</td>
@@ -113,6 +125,11 @@
                             <td>123456789</td>
                             <td>100</td>
                             <td>Web Design + React.js</td>
+                            <td>
+                                <button onclick="window.print()" class="btn btn-primary btn-print">
+                                    🖨️ Print
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
