@@ -14,3 +14,14 @@ body{
     margin: 0;
     padding: 0;
 }
+
+<<<<<<<<< Temporary merge branch 1
+=========
+.font-battambang{
+    font-family: 'Battambang-Regular',sans-serif;
+}
+
+.font-siemreap{
+    font-family: 'Siemreap-Regular',sans-serif;
+}
+>>>>>>>>> Temporary merge branch 2
