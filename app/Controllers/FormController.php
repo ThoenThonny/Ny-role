@@ -20,7 +20,7 @@ final class FormController extends Controller
         $this->view('Form/class-free-form', [
             'courses' => $courses,
             'csrfToken' => $csrfToken,
-            'message' => '', // optional message placeholder
+            'message' => '', 
         ]);
     }
 
@@ -36,9 +36,32 @@ final class FormController extends Controller
             return;
         }
 
+        // Validation errors array
+        $errors = [];
+
         // Input validation
-        if ($studentName === '' || $course === '') {
-            $this->redirectWithMessage('form', 'All fields are required!');
+        if ($studentName === '') {
+            $errors['student_name'] = 'Full Name is required!';
+        }
+        if ($course === '') {
+            $errors['course'] = 'Course is required!';
+        }
+
+        // If there are validation errors, show form with errors
+        if (!empty($errors)) {
+            $courses = $this->getCourses();
+            $csrfToken = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
+            $_SESSION['csrf_token'] = $csrfToken;
+
+            $this->view('Form/class-free-form', [
+                'courses' => $courses,
+                'csrfToken' => $csrfToken,
+                'errors' => $errors,
+                'old' => [
+                    'student_name' => $studentName,
+                    'course' => $course
+                ]
+            ]);
             return;
         }
 
