@@ -1,4 +1,0 @@
-# Ignore config and database files
-app/config.php
-app/Core/Database.php
-.env
