@@ -10,15 +10,27 @@ use App\Models\StudentModel;
 
 final class CertificateController extends Controller
 {
+    // Show the main certificate page
     public function index(): void
     {
         $type = $_GET['type'] ?? 'normal';
-        $this->view('certificate/index', [
-            'title' => 'Certificate',
-            'type' => $type
-        ]);
+
+        // Decide which view to load based on type
+        if ($type === 'normal') {
+            // Default is showing teachers table
+            $this->view('components/tables/table_teacher', [
+                'title' => 'Certificate',
+                'type' => $type
+            ]);
+        } else {
+            $this->view('certificate/error', [
+                'message' => 'Invalid certificate type.'
+            ]);
+        }
     }
- public function getClasses(): void
+
+    // Return JSON of finished classes
+    public function getClasses(): void
     {
         try {
             $type = (string)($_GET['type'] ?? 'normal');
@@ -34,9 +46,9 @@ final class CertificateController extends Controller
         }
     }
 
+    // Return JSON of students by class
     public function getStudents(): void
     {
-        // example
         try {
             $classId = (int)($_GET['class_id'] ?? 0);
             if ($classId <= 0) {
@@ -51,4 +63,13 @@ final class CertificateController extends Controller
             $this->jsonResponse(false, [], $e->getMessage(), 500);
         }
     }
+
+    // Show the students table page
+    public function students(): void
+{
+    $this->view('certificate/index', [
+        'title' => 'liststudents',
+        'type'  => $_GET['type'] ?? 'normal'
+    ]);
+}
 }

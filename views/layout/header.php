@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title><?= $title ?? 'App' ?></title>
@@ -10,14 +11,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- link css -->
-    <link href="./assets/css/app.css" rel="stylesheet">
-    <link href="./assets/css/sidebar.css" rel="stylesheet">
-    <link href="./assets/css/dashboard.css" rel="stylesheet">
+    <link href="<?= base_url('assets/css/app.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/sidebar.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/dashboard.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/studentslist.css') ?>" rel="stylesheet">
 </head>
-<body>
-<div class="d-flex font-siemreap">
-    <!-- sidebar -->
-    <?php require __DIR__.'/sidebar.php'; ?>
 
-    <!-- main content -->
-    <main class="flex-grow-1 p-4">
+<body>
+    <div class="d-flex font-siemreap">
+        <!-- sidebar -->
+        <?php require __DIR__ . '/sidebar.php'; ?>
+
+        <!-- main content -->
+        <main class="flex-grow-1 p-4">

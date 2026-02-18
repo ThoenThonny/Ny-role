@@ -19,6 +19,11 @@ $router->get('/teacher', [TeacherController::class, 'index']);
 // API Routes
 $router->get('/api/classes', [CertificateController::class, 'getClasses']);
 $router->get('/api/students', [CertificateController::class, 'getStudents']);
+// existing routes
+// index.php
+$router->get('/certificate/students', [CertificateController::class, 'students']);
 
 // Dispatch
 $router->dispatch();
+
+
