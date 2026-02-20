@@ -14,6 +14,7 @@ $router = new Router();
 $router->get('/', [DashboardController::class, 'index']);
 $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/certificate', [CertificateController::class, 'index']);
+$router->get('/certificate/scholarship', [CertificateController::class, 'getscholarship']);
 $router->get('/teacher', [TeacherController::class, 'index']);
 
 // API Routes

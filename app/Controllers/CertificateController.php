@@ -18,6 +18,13 @@ final class CertificateController extends Controller
             'type' => $type
         ]);
     }
+    public function getscholarship(){
+        $type = $_GET['type'] ?? 'scholarship';
+        $this->view('certificate/scholarship', [
+            'title' => 'Certificate',
+            'type' => $type
+        ]);
+    }
  public function getClasses(): void
     {
         try {
