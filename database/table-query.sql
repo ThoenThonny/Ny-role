@@ -133,3 +133,20 @@ CREATE TABLE IF NOT EXISTS end_class_students (
         
     UNIQUE KEY uk_end_class_student (end_class_id, student_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ================================
+-- CLASS-FREE CERTIFICATE REQUESTS TABLE
+-- ================================
+CREATE TABLE IF NOT EXISTS certificate_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL,
+    course VARCHAR(100) NOT NULL,
+    end_date DATE NOT NULL,
+    status ENUM('pending','approved','printed') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_status (status),
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

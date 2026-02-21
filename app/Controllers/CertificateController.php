@@ -20,10 +20,14 @@ final class CertificateController extends Controller
             $csrfToken = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
             $_SESSION['csrf_token'] = $csrfToken;
 
+            // Get certificates from session
+            $certificates = $_SESSION['certificates'] ?? [];
+
             $this->view('Form/class-free-form', [
                 'csrfToken' => $csrfToken,
                 'errors' => [],
-                'old' => []
+                'old' => [],
+                'certificates' => $certificates
             ]);
             return;
         }
