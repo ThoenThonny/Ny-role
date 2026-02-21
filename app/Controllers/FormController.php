@@ -108,6 +108,9 @@ final class FormController extends Controller
             'message' => 'Certificate request submitted successfully!'
         ]);
     }
+    // student name save in db 
+    // course local storage
+    // date save in table 
 
     // Redirect with message
     private function redirectWithMessage(string $route, string $message): void
@@ -116,4 +119,6 @@ final class FormController extends Controller
         header("Location: /{$route}", true, 302);
         exit;
     }
+
+
 }

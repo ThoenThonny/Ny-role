@@ -150,3 +150,5 @@ CREATE TABLE IF NOT EXISTS certificate_requests (
     INDEX idx_status (status),
     INDEX idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
