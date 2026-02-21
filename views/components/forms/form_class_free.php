@@ -79,13 +79,13 @@
                     </div>
                 <?php endif; ?>
             </div>
-        </div>
 
-        <div class="form-actions">
-            <button type="submit" class="submit-btn">
-                <i class="bi bi-send-fill me-2"></i>
-                ស្នើរសុំ
-            </button>
+            <div class="form-group form-group-btn">
+                <label>&nbsp;</label>
+                <button type="submit" class="submit-btn">
+                 បញ្ជូន
+                </button>
+            </div>
         </div>
     </form>
 </div>
@@ -94,21 +94,15 @@
 const form = document.getElementById('classFreeForm');
 const fields = ['student_name', 'course', 'end_date'];
 
+// Clear localStorage on page load to start fresh
+localStorage.removeItem('certificate_course');
+
 // Save course to localStorage when form is submitted
 form.addEventListener('submit', function(e) {
     const courseInput = document.getElementById('course');
     if (courseInput.value.trim() !== '') {
         // Save course to localStorage
         localStorage.setItem('certificate_course', courseInput.value.trim());
-    }
-});
-
-// Load saved course from localStorage on page load
-window.addEventListener('DOMContentLoaded', function() {
-    const courseInput = document.getElementById('course');
-    const savedCourse = localStorage.getItem('certificate_course');
-    if (savedCourse && !courseInput.value) {
-        courseInput.value = savedCourse;
     }
 });
 

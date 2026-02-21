@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Models\ClassModel;
 use App\Models\StudentModel;
+use App\Models\CertificateClassFreeModel;
 
 final class CertificateController extends Controller
 {
@@ -20,14 +21,24 @@ final class CertificateController extends Controller
             $csrfToken = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
             $_SESSION['csrf_token'] = $csrfToken;
 
-            // Get certificates from session
-            $certificates = $_SESSION['certificates'] ?? [];
+            // Pagination settings
+            $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+            $limit = 5; // 5 students per page
+
+            // Get certificates from database
+            $certificateModel = new CertificateClassFreeModel();
+            $certificates = $certificateModel->getAllPaginated($page, $limit);
+            $totalCount = $certificateModel->getCount();
+            $totalPages = ceil($totalCount / $limit);
 
             $this->view('Form/class-free-form', [
                 'csrfToken' => $csrfToken,
                 'errors' => [],
                 'old' => [],
-                'certificates' => $certificates
+                'certificates' => $certificates,
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'totalCount' => $totalCount
             ]);
             return;
         }

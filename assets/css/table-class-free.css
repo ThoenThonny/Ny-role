@@ -246,3 +246,67 @@
 .mt-4 {
     margin-top: 1rem;
 }
+
+/* Pagination Styles */
+.pagination-wrapper {
+    padding: 16px 24px;
+    background: #fafafa;
+    border-top: 1px solid var(--app-card-border);
+}
+
+.pagination {
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.pagination .page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 6px;
+    font-size: .85rem;
+    font-weight: 600;
+    color: #374151;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    text-decoration: none;
+    transition: all .15s;
+}
+
+.pagination .page-item .page-link:hover:not(.disabled) {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #111827;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--sidebar-bg);
+    border-color: var(--sidebar-bg);
+    color: var(--sidebar-text-white);
+}
+
+.pagination .page-item.disabled .page-link {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    text-align: center;
+    font-size: .8rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Bootstrap 5 overrides for Khmer */
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.justify-content-center {
+    justify-content: center !important;
+}

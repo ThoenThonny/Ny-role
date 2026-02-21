@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controller;
-use App\Models\CertificateModel;
+use App\Models\CertificateClassFreeModel;
 
 final class FormController extends Controller
 {
-    private CertificateModel $certificateModel;
+    private CertificateClassFreeModel $certificateClassFreeModel;
 
     public function __construct()
     {
-        $this->certificateModel = new CertificateModel();
+        $this->certificateClassFreeModel = new CertificateClassFreeModel();
     }
 
     // Show the class-free form
@@ -22,14 +22,23 @@ final class FormController extends Controller
         $csrfToken = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
         $_SESSION['csrf_token'] = $csrfToken;
 
-        // Get certificates from database
-        $certificates = $this->certificateModel->getAll();
+        // Pagination settings
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = 5; // 5 students per page
+
+        // Get paginated certificates from database
+        $certificates = $this->certificateClassFreeModel->getAllPaginated($page, $limit);
+        $totalCount = $this->certificateClassFreeModel->getCount();
+        $totalPages = ceil($totalCount / $limit);
 
         $this->view('Form/class-free-form', [
             'csrfToken' => $csrfToken,
             'errors' => [],
             'old' => [],
-            'certificates' => $certificates
+            'certificates' => $certificates,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'totalCount' => $totalCount
         ]);
     }
 
@@ -52,7 +61,9 @@ final class FormController extends Controller
         if ($course === '') $errors['course'] = 'Course is required!';
         if ($endDate === '') $errors['end_date'] = 'End Date is required!';
 
-        $certificates = $this->certificateModel->getAll();
+        $certificates = $this->certificateClassFreeModel->getAllPaginated(1, 5);
+        $totalCount = $this->certificateClassFreeModel->getCount();
+        $totalPages = ceil($totalCount / 5);
 
         if (!empty($errors)) {
             $csrfToken = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
@@ -66,7 +77,10 @@ final class FormController extends Controller
                     'course' => $course,
                     'end_date' => $endDate
                 ],
-                'certificates' => $certificates
+                'certificates' => $certificates,
+                'currentPage' => 1,
+                'totalPages' => $totalPages,
+                'totalCount' => $totalCount
             ]);
             return;
         }
@@ -75,8 +89,10 @@ final class FormController extends Controller
         $csrfToken = $_SESSION['csrf_token'] ?? bin2hex(random_bytes(32));
         $_SESSION['csrf_token'] = $csrfToken;
 
-        // Save to database
-        $result = $this->certificateModel->create(
+        // Save to certificate_class_free table
+        // Student name, course, and end_date are all saved to the database
+        // Course is also saved to localStorage via JavaScript
+        $result = $this->certificateClassFreeModel->create(
             strtoupper($studentName),
             $course,
             $endDate
@@ -91,13 +107,18 @@ final class FormController extends Controller
                     'course' => $course,
                     'end_date' => $endDate
                 ],
-                'certificates' => $certificates
+                'certificates' => $certificates,
+                'currentPage' => 1,
+                'totalPages' => $totalPages,
+                'totalCount' => $totalCount
             ]);
             return;
         }
 
         // Get updated certificates from database
-        $certificates = $this->certificateModel->getAll();
+        $certificates = $this->certificateClassFreeModel->getAllPaginated(1, 5);
+        $totalCount = $this->certificateClassFreeModel->getCount();
+        $totalPages = ceil($totalCount / 5);
 
         // Show form with success message and updated table
         $this->view('Form/class-free-form', [
@@ -105,12 +126,12 @@ final class FormController extends Controller
             'errors' => [],
             'old' => [],
             'certificates' => $certificates,
+            'currentPage' => 1,
+            'totalPages' => $totalPages,
+            'totalCount' => $totalCount,
             'message' => 'Certificate request submitted successfully!'
         ]);
     }
-    // student name save in db 
-    // course local storage
-    // date save in table 
 
     // Redirect with message
     private function redirectWithMessage(string $route, string $message): void
@@ -119,6 +140,5 @@ final class FormController extends Controller
         header("Location: /{$route}", true, 302);
         exit;
     }
-
 
 }

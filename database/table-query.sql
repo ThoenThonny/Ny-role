@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS students (
     user_id INT NULL,
     class_id INT NOT NULL,
     enrollment_date DATE NULL,
-    end_date DATE NULL,
     status ENUM('active','completed','dropped') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -136,3 +135,18 @@ CREATE TABLE IF NOT EXISTS end_class_students (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+-- ================================
+-- CERTIFICATE CLASS FREE TABLE
+-- ================================
+CREATE TABLE IF NOT EXISTS certificate_class_free (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_name VARCHAR(100) NOT NULL,
+    course VARCHAR(100) NOT NULL,
+    end_date DATE NOT NULL,
+    status ENUM('pending','approved') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_status (status),
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4; 
