@@ -40,9 +40,7 @@
                     </div>
                 <?php endif; ?>
             </div>
-        </div>
 
-        <div class="form-row">
             <div class="form-group">
                 <label for="course">
                     <i class="bi bi-book-fill me-2"></i>វគ្គសិក្សា <span class="required">*</span>
@@ -62,9 +60,7 @@
                     </div>
                 <?php endif; ?>
             </div>
-        </div>
 
-        <div class="form-row">
             <div class="form-group">
                 <label for="end_date">
                     <i class="bi bi-calendar-event-fill me-2"></i>ថ្ងៃបញ្ចប់វគ្គសិក្សា <span class="required">*</span>
@@ -97,6 +93,24 @@
 <script>
 const form = document.getElementById('classFreeForm');
 const fields = ['student_name', 'course', 'end_date'];
+
+// Save course to localStorage when form is submitted
+form.addEventListener('submit', function(e) {
+    const courseInput = document.getElementById('course');
+    if (courseInput.value.trim() !== '') {
+        // Save course to localStorage
+        localStorage.setItem('certificate_course', courseInput.value.trim());
+    }
+});
+
+// Load saved course from localStorage on page load
+window.addEventListener('DOMContentLoaded', function() {
+    const courseInput = document.getElementById('course');
+    const savedCourse = localStorage.getItem('certificate_course');
+    if (savedCourse && !courseInput.value) {
+        courseInput.value = savedCourse;
+    }
+});
 
 form.addEventListener('submit', function(e) {
     let isValid = true;

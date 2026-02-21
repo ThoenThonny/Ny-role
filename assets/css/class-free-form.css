@@ -54,6 +54,23 @@
 /* Form Row */
 .form-row {
     margin-bottom: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+/* Responsive: 2 columns on tablet */
+@media (max-width: 992px) {
+    .form-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Responsive: 1 column on mobile */
+@media (max-width: 576px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Form Groups */
