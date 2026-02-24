@@ -73,9 +73,11 @@ function renderAllTables() {
                 <td>${item.course ?? '-'}</td>
                 <td>${item.time ?? '-'}</td>
                 <td>
-                    <button class="btn-custom-action">
+                    <a href="<?= base_url('certificate/students') ?>?class_id=${item.id}&course=${encodeURIComponent(item.course)}&teacher=${encodeURIComponent(item.teacher_name ?? 'គ្មានគ្រូ')}&time=${encodeURIComponent(item.time ?? '-')}"
+                       <button class="btn-custom-action">
                         <i class="fas fa-users"></i> មើលសិស្ស
                     </button>
+                    </a>
                 </td>
             </tr>
         `).join('');
