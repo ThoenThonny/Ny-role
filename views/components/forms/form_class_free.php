@@ -17,7 +17,6 @@
     <?php endif; ?>
 
     <form method="POST" action="/form/submit" novalidate id="classFreeForm" class="modern-form">
-        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken) ?>">
 
         <div class="form-row">
             <div class="form-group">
