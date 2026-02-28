@@ -156,23 +156,23 @@
                                                 <i class="bi bi-award-fill"></i>
                                             </div>
                                         </div>
-                                        <div class="cert-school-kh">បច្ចេកវិទ្យាព័ត៌មាននិងអេឡិចត្រូនិច វិទ្យាល័យបច្ចេក</div>
-                                        <div class="cert-school-en">Engineering of Technology and Electronic Center</div>
+                                        <div class="cert-school-kh">មជ្ឈមណ្ឌលវិស្វកម្មបច្ចេកវិទ្យា និង<span class=" text-black">អេឡិចត្រូនិក</span></div>
+                                        <div class="cert-school-en"><span class=" text-black">Engineering</span> of Technology and Electronic Center</div>
                                         <div class="cert-title">Certificate of Completion</div>
                                         <div class="cert-certify">This is to certify that</div>
-                                        <div class="cert-student-name" id="cert_student_name">—</div>
+                                        <h1 class="cert-student-name" id="cert_student_name">—</h1>
                                         <div class="cert-desc">
                                             has successfully completed all requirements for completion<br>
                                             of the Computer Training Courses in
                                         </div>
-                                        <div class="cert-course" id="cert_course">—</div>
+                                        <h4 class="cert-course" id="cert_course">—</h4>
                                         <div class="cert-granted">Granted: <span id="cert_time">—</span></div>
                                         <div class="cert-footer">
                                             <div class="cert-id">ID : <span id="cert_id_val">—</span></div>
                                             <div class="cert-signature">
                                                 <div class="cert-sig-line"></div>
-                                                <div class="cert-sig-name" id="cert_sign_teacher">Mr. Heng Pheakna</div>
-                                                <div class="cert-sig-role">Director</div>
+                                                <div class="cert-sig-name text-center" id="cert_sign_teacher">Mr. Heng Pheakna</div>
+                                                <div class="cert-sig-role text-center">Director</div>
                                             </div>
                                         </div>
                                     </div>
