@@ -505,7 +505,7 @@
     }
 
     .cert-inner-border {
-        border: 15px solid #5e5f65 !important;
+        border: 16px solid #5e5f65 !important;
         border-radius: 10px;
         padding: 15px 34px 28px !important;
         width: 100% !important;
@@ -527,7 +527,7 @@
     }
 
     .cert-id {
-        color: #cc0000 ;
+        color: #cc0000;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         font-weight: 700;
