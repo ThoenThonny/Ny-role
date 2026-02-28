@@ -28,7 +28,7 @@
 
     justify-content: center;
     width: 297mm;   /* A4 landscape */
-    height: 210mm; 
+    height: 230mm; 
 }
 
 .certificate-free {
@@ -173,7 +173,7 @@
 .cert-free-sig-line {
     height: 1px; 
     background: #cea324;
-    width: 128px; 
+    width: 160px; 
     margin-left: auto; 
     margin-bottom: 4px;
 }
