@@ -180,8 +180,8 @@
                                                 <i class="bi bi-award-fill"></i>
                                             </div>
                                         </div>
-                                        <div class="cert-school-kh">មជ្ឈមណ្ឌលវិស្វកម្មបច្ចេកវិទ្យា និង<span class="text-black">អេឡិចត្រូនិក</span></div>
-                                        <div class="cert-school-en"><span class="text-black">Engineering</span> of Technology and Electronic Center</div>
+                                        <div class="cert-school-kh">បច្ចេកវិទ្យាព័ត៌មាននិងអេឡិចត្រូនិច វិទ្យាល័យបច្ចេក</div>
+                                        <div class="cert-school-en">Engineering of Technology and Electronic Center</div>
                                         <div class="cert-title">Certificate of Completion</div>
                                         <div class="cert-certify">This is to certify that</div>
                                         <h1 class="cert-student-name" id="cert_student_name">—</h1>
