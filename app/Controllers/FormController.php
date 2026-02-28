@@ -31,10 +31,13 @@ final class FormController extends Controller
         $this->view('Form/class-free-form', [
             'errors' => [],
             'old' => [],
+            'message' => '',
             'certificates' => $certificates,
             'currentPage' => $page,
             'totalPages' => $totalPages,
-            'totalCount' => $totalCount
+            'totalCount' => $totalCount,
+            'showCertificate' => false,
+            'certificateData' => null
         ]);
     }
 
@@ -62,10 +65,13 @@ final class FormController extends Controller
                     'course' => $course,
                     'end_date' => $endDate
                 ],
+                'message' => '',
                 'certificates' => $certificates,
                 'currentPage' => 1,
                 'totalPages' => $totalPages,
-                'totalCount' => $totalCount
+                'totalCount' => $totalCount,
+                'showCertificate' => false,
+                'certificateData' => null
             ]);
             return;
         }
@@ -85,10 +91,13 @@ final class FormController extends Controller
                     'course' => $course,
                     'end_date' => $endDate
                 ],
+                'message' => '',
                 'certificates' => $certificates,
                 'currentPage' => 1,
                 'totalPages' => $totalPages,
-                'totalCount' => $totalCount
+                'totalCount' => $totalCount,
+                'showCertificate' => false,
+                'certificateData' => null
             ]);
             return;
         }
@@ -98,9 +107,21 @@ final class FormController extends Controller
         $totalCount = $this->certificateClassFreeModel->getCount();
         $totalPages = ceil($totalCount / 5);
 
-        // Redirect to certificate page with type=free
-        header("Location: /certificate?type=free", true, 302);
-        exit;
+        // Get the latest certificate for display
+        $latestCertificate = $this->certificateClassFreeModel->getLatest();
+
+        // Show form with success message and certificate displayed below
+        $this->view('Form/class-free-form', [
+            'message' => 'Certificate request submitted successfully!',
+            'errors' => [],
+            'old' => [],
+            'certificates' => $certificates,
+            'currentPage' => 1,
+            'totalPages' => $totalPages,
+            'totalCount' => $totalCount,
+            'showCertificate' => true,
+            'certificateData' => $latestCertificate
+        ]);
     }
 
     // Redirect
@@ -108,6 +129,10 @@ final class FormController extends Controller
     {
         header("Location: /{$route}", true, 302);
         exit;
+    }
+
+    public function showCertificate(){
+        return $this->view("components.certificate.class-free-certificate");
     }
 
 }

@@ -1,13 +1,4 @@
 <div class="form-card">
-    <div class="form-card-header">
-        <div class="form-card-icon">
-            <i class="bi bi-award-fill"></i>
-        </div>
-        <div>
-            <div class="form-card-title">ទម្រង់ស្នើរសុំសញ្ញាប័ត្រ</div>
-            <div class="form-card-subtitle">Certificate Request Form</div>
-        </div>
-    </div>
 
     <?php if (! empty($message)): ?>
         <div class="form-message">
@@ -81,9 +72,9 @@
 
             <div class="form-group form-group-btn">
                 <label>&nbsp;</label>
-                <button type="submit" class="submit-btn">
-                 បញ្ជូន
-                </button>
+                   <button type="button" class="btn-cert-free-print text-white" id="btnPrintCertificate">
+            <i class="bi bi-printer-fill me-2"></i> បោះពុម្ព
+        </button>
             </div>
         </div>
     </form>
@@ -147,3 +138,4 @@ fields.forEach(id => {
     });
 });
 </script>
+

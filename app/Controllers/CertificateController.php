@@ -107,6 +107,26 @@ final class CertificateController extends Controller
         }
     }
 
+    // Return certificate date based on end_date
+    public function getCertificateDate(): void
+    {
+        try {
+            $endDate = $_GET['end_date'] ?? null;
+            
+            if (empty($endDate)) {
+                throw new \RuntimeException('end_date is required');
+            }
+
+            // Use the helper function with the provided end_date
+            $certDateObj = getCertificateDate(10, 15, 'Asia/Phnom_Penh', true, $endDate);
+            $formattedDate = $certDateObj->format('F j, Y');
+
+            $this->jsonResponse(true, ['date' => $formattedDate]);
+        } catch (\Throwable $e) {
+            $this->jsonResponse(false, [], $e->getMessage(), 500);
+        }
+    }
+
     // Show the students table page
     public function students(): void
     {
