@@ -412,19 +412,72 @@
     font-family: 'Courier New', monospace; letter-spacing: .07em;
 }
 
+/* Certificate Header - Logo Left, Kingdom Right */
+.cert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+.cert-header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.cert-logo-box {
+    width: 60px;
+    height: 60px;
+    background: #2d2e81;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+.cert-logo-e {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffc107;
+    font-family: Arial, sans-serif;
+}
+.cert-motto {
+    font-size: .6rem;
+    color: #333;
+    margin-top: 4px;
+    font-family: Arial, sans-serif;
+}
+.cert-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.cert-divider {
+    width: 100%;
+    height: 2px;
+    background: #2d2e81;
+    margin-top: 8px;
+}
+.cert-id-bottom {
+    text-align: center;
+    font-size: .56rem;
+    color: #cc0000;
+    font-family: 'Courier New', monospace;
+    letter-spacing: .04em;
+    margin-top: 20px;
+}
+
 /* ── PRINT STYLES: ONLY CERTIFICATE VISIBLE ──── */
 
 @media print {
     @page {
-        size: A4 portrait;
+        size: A4 landscape;
         margin: 0;
     }
 
     html, body {
         margin: 0 !important;
         padding: 0 !important;
-        width: 210mm !important;
-        height: 297mm !important;
+        width: 297mm !important;
+        height: 210mm !important;
         background: #fff !important;
         overflow: hidden !important;
     }
@@ -520,4 +573,18 @@
     .cert-sig-name       { font-size: 1.1rem !important; }
     .cert-sig-role       { font-size: 1rem !important; }
     .cert-id             { font-size: .8rem !important; }
+}
+    .cert-logo-fallback  { width: 110px !important; height: 110px !important; }
+    .cert-school-kh      { font-size: 1.2rem !important; }
+    .cert-school-en      { font-size: .85rem !important; margin-bottom: 18px !important; }
+    .cert-title          { font-size: 2.6rem !important; margin: 12px 0 22px !important; }
+    .cert-certify        { font-size: .9rem !important;  margin-bottom: 18px !important; }
+    .cert-student-name   { font-size: 1.8rem !important; margin-bottom: 24px !important; }
+    .cert-desc           { font-size: .88rem !important; margin-bottom: 18px !important; }
+    .cert-course         { font-size: 1.1rem !important; margin-bottom: 24px !important; }
+    .cert-granted        { font-size: 1rem !important;   margin-bottom: 48px !important; }
+    .cert-sig-line       { width: 200px !important; }
+    .cert-sig-name       { font-size: .95rem !important; }
+    .cert-sig-role       { font-size: .9rem !important; }
+    .cert-id             { font-size: .68rem !important; }
 }
