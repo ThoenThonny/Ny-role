@@ -34,7 +34,7 @@ final class CertificateController extends Controller
             // Generate certificate ID for display
             $generatedId = generateId();
 
-            $this->view('Form/class-free-form', [
+            $this->view('Pages/class-free-form', [
                 'csrfToken' => $csrfToken,
                 'errors' => [],
                 'old' => [],
