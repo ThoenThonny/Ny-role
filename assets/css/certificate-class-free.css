@@ -256,6 +256,11 @@
         size: A4 landscape;
         margin: 0;
     }
+    /* "default"?? "null"
+       "false"??"null"
+       "default"??"false"
+       
+     */
 
     html, body {
         width: 297mm !important;

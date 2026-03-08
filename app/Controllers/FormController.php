@@ -31,7 +31,7 @@ final class FormController extends Controller
         $totalCount = $this->certificateClassFreeModel->getCount();
         $totalPages = ceil($totalCount / $limit);
 
-        $this->view('Form/class-free-form', [
+        $this->view('Pages/class-free-form', [
             'errors' => [],
             'old' => [],
             'message' => '',
@@ -65,7 +65,7 @@ final class FormController extends Controller
         $totalPages = ceil($totalCount / 5);
 
         if (!empty($errors)) {
-            $this->view('Form/class-free-form', [
+            $this->view('Pages/class-free-form', [
                 'errors' => $errors,
                 'old' => [
                     'student_name' => $studentName,
