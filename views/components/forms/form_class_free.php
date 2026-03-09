@@ -118,12 +118,21 @@ if (!isset($generatedId) || empty($generatedId)) {
 </div>
 
 <script>
+// Base URL for API calls - ensure it always has a leading slash
+// Use absolute path for API calls - no dynamic base URL needed
+const API_BASE_URL = '';
+
+// Debug: Log the API base URL
+console.log('API_BASE_URL:', API_BASE_URL);
 
 let courseTypingTimer;
 const courseTypingDelay = 800;
 
+let courseDropdownRefreshTimer;
+const courseDropdownRefreshDelay = 1500; // Refresh dropdown from DB every 1.5s while typing
+
 function saveCourseToDB(courseName) {
-    fetch('/api/course/save', {
+    fetch(API_BASE_URL + '/api/course/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ course_name: courseName.trim() })
@@ -138,13 +147,21 @@ function saveCourseToDB(courseName) {
 }
 
 function refreshCourseDropdown(autoSelectValue = null) {
-    fetch('/api/course/list')
-    .then(res => res.json())
+    const apiUrl = API_BASE_URL + '/api/course/list';
+    console.log('Fetching courses from:', apiUrl);
+    
+    fetch(apiUrl)
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('HTTP error! status: ' + res.status);
+        }
+        return res.json();
+    })
     .then(data => {
         const courseFilterSelect = document.getElementById('course_filter');
         if (!courseFilterSelect) return;
         
-        // Rebuild options
+        // Rebuild options from database
         courseFilterSelect.innerHTML = '<option value="">-- ជ្រើសរើសវគ្គសិក្សា --</option>';
         
         if (data.courses && Array.isArray(data.courses)) {
@@ -167,7 +184,15 @@ function refreshCourseDropdown(autoSelectValue = null) {
             }
         }
     })
-    .catch(err => console.error('Error loading courses:', err));
+    .catch(err => {
+        console.error('Error loading courses:', err);
+        // Show user-friendly error
+        const courseFilterSelect = document.getElementById('course_filter');
+        if (courseFilterSelect) {
+            courseFilterSelect.innerHTML = '<option value="">-- មិនអាចផ្ទុកទិន្នន័យ --</option>';
+        }
+        alert('Error loading courses: ' + err.message + '\nAPI URL: ' + apiUrl);
+    });
 }
 
 function formatCertificateDate(dateString, cutoffDay = 10, certificateDay = 15) {
@@ -306,13 +331,42 @@ document.addEventListener('DOMContentLoaded', function() {
             const val = e.target.value;
             certCourse.textContent = val.toUpperCase();
             CertificateStorage.saveCourse(val);
+            
+            // Debounced auto-save to DB and refresh dropdown while typing
+            clearTimeout(courseTypingTimer);
+            if (val.trim().length >= 2) {
+                courseTypingTimer = setTimeout(function() {
+                    // Save to database
+                    fetch(API_BASE_URL + '/api/course/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ course_name: val.trim() })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        // After saving, refresh dropdown from database
+                        refreshCourseDropdown(val.trim());
+                    })
+                    .catch(err => console.error('Error saving course:', err));
+                }, courseTypingDelay);
+            }
         });
         
-        // Save to DB only when user leaves the input field (blur)
+        // Save to DB immediately when user leaves the field
         courseInput.addEventListener('blur', function(e) {
             const val = e.target.value.trim();
             if (val.length >= 2) {
-                saveCourseToDB(val);
+                clearTimeout(courseTypingTimer);
+                fetch(API_BASE_URL + '/api/course/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ course_name: val })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    refreshCourseDropdown(val);
+                })
+                .catch(err => console.error('Error saving course:', err));
             }
         });
     }
