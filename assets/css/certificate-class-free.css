@@ -114,7 +114,7 @@
 .cert-free-title {
     text-align: center;
     font-family: "UnifrakturCook", cursive;
-    font-size: 2.8rem;
+    font-size: 4.2rem;
     font-weight: 700;
     color: #20215f;
     white-space: nowrap;
@@ -260,11 +260,6 @@
         size: A4 landscape;
         margin: 0;
     }
-    /* "default"?? "null"
-       "false"??"null"
-       "default"??"false"
-       
-     */
 
     html, body {
         width: 297mm !important;
@@ -293,9 +288,8 @@
 
     .certificate-free {
         width: 297mm !important;
-        height: 207mm !important;
+        height: 210mm !important;
         padding: 5mm !important;
-        margin: auto !important;
         box-sizing: border-box !important;
         box-shadow: none !important;
     }
@@ -322,33 +316,4 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
-}
-
-/* Remove default select arrow */
-#course_filter {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: none !important;
-}
-
-/* Hide arrow for old Edge/IE */
-#course_filter::-ms-expand {
-    display: none;
-}
-
-/* Fix spacing after removing arrow */
-#course_filter {
-    padding-right: 10px;
-}
-
-.input-wrapper select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: none !important;
-}
-
-.input-wrapper select::-ms-expand {
-    display: none;
 }

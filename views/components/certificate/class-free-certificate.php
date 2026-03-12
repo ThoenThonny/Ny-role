@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <?php require_once __DIR__ . '/../../../app/helpers.php'; ?>
-        <link href="<?= base_url('assets/css/certificate-class-free.css') ?>" rel="stylesheet">
+    <!-- Google Fonts for Certificate -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Playpen+Sans+Deva:ital@1&display=swap" rel="stylesheet">
+    <link href="<?= base_url('assets/css/certificate-class-free.css') ?>" rel="stylesheet">
 </head>
 <body>
     <!-- ==================== CERTIFICATE COMPONENT ==================== -->
@@ -172,6 +176,9 @@ function printOnlyFreeCert() {
             #class-free-cert.certificate-preview .certificate-free-wrap {
                 transform: none !important;
             }
+            /* Force fonts in print */
+            .cert-free-title { font-family: 'UnifrakturCook', cursive !important; }
+            .cert-free-course { font-family: 'Playpen Sans Deva', cursive !important; }
         }
     `;
     document.head.appendChild(style);
