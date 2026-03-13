@@ -18,17 +18,22 @@ final class CertificateClassFreeModel
 
     /**
      * Create a new certificate class-free request
+     * Automatically generates certificate code and sets status to 'done'
      */
     public function create(string $studentName, string $course, string $endDate): int|false
     {
+        // Generate certificate code automatically
+        $certificateCode = generateCertificateId();
+        
         $stmt = $this->db->prepare(
-            "INSERT INTO certificate_class_free (student_name, course, end_date, status) 
-             VALUES (:student_name, :course, :end_date, 'pending')"
+            "INSERT INTO certificate_class_free (student_name, course, end_date, certificate_code, status) 
+             VALUES (:student_name, :course, :end_date, :certificate_code, 'done')"
         );
 
         $stmt->bindValue(':student_name', strtoupper($studentName), PDO::PARAM_STR);
         $stmt->bindValue(':course', $course, PDO::PARAM_STR);
         $stmt->bindValue(':end_date', $endDate, PDO::PARAM_STR);
+        $stmt->bindValue(':certificate_code', $certificateCode, PDO::PARAM_STR);
 
         if ($stmt->execute()) {
             return (int) $this->db->lastInsertId();
@@ -114,6 +119,79 @@ final class CertificateClassFreeModel
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
         return $stmt->execute();
+    }
+
+    /**
+     * Update certificate code and status for an existing record
+     */
+    public function updateCertificateCode(int $id): bool
+    {
+        // Generate new certificate code
+        $certificateCode = generateCertificateId();
+        
+        $stmt = $this->db->prepare(
+            "UPDATE certificate_class_free SET certificate_code = :certificate_code, status = 'done' WHERE id = :id"
+        );
+
+        $stmt->bindValue(':certificate_code', $certificateCode, PDO::PARAM_STR);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * Fix all records with NULL certificate_code
+     * Generates certificate codes and sets status to 'done'
+     */
+    public function fixNullCertificateCodes(): int
+    {
+        // Get all records with NULL certificate_code
+        $stmt = $this->db->query(
+            "SELECT id FROM certificate_class_free WHERE certificate_code IS NULL OR certificate_code = ''"
+        );
+        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $fixedCount = 0;
+        foreach ($records as $record) {
+            if ($this->updateCertificateCode((int)$record['id'])) {
+                $fixedCount++;
+            }
+        }
+        
+        return $fixedCount;
+    }
+
+    /**
+     * Fix all records with pending status - generate certificate code and set to done
+     */
+    public function fixPendingCertificates(): int
+    {
+        // Get all records with pending status (regardless of certificate_code)
+        $stmt = $this->db->query(
+            "SELECT id, certificate_code FROM certificate_class_free WHERE status = 'pending' ORDER BY id"
+        );
+        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $fixedCount = 0;
+        foreach ($records as $record) {
+            // Generate certificate code if NULL or empty
+            $certificateCode = $record['certificate_code'];
+            if (empty($certificateCode)) {
+                $certificateCode = generateCertificateId();
+            }
+            
+            $stmt = $this->db->prepare(
+                "UPDATE certificate_class_free SET certificate_code = :certificate_code, status = 'done' WHERE id = :id"
+            );
+            $stmt->bindValue(':certificate_code', $certificateCode, PDO::PARAM_STR);
+            $stmt->bindValue(':id', (int)$record['id'], PDO::PARAM_INT);
+            
+            if ($stmt->execute()) {
+                $fixedCount++;
+            }
+        }
+        
+        return $fixedCount;
     }
 
     /**

@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-        <link href="<?= base_url('assets/css/certificate-class-free.css') ?>" rel="stylesheet">
+    <?php require_once __DIR__ . '/../../../app/helpers.php'; ?>
+    <!-- Google Fonts for Certificate -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Playpen+Sans+Deva:ital@1&display=swap" rel="stylesheet">
+    <link href="<?= base_url('assets/css/certificate-class-free.css') ?>" rel="stylesheet">
 </head>
 <body>
     <!-- ==================== CERTIFICATE COMPONENT ==================== -->
@@ -19,7 +24,7 @@
                     <div class="cert-free-header">
                         <div class="cert-free-header-left">
                             <div class="cert-free-logo-box">
-                                <img src="assets/Images/logo.png" alt="">
+                                <img src="<?= base_url('assets/Images/logo.png') ?>" alt="">
                             </div>
                             <div class="cert-free-motto">"Build your IT Skill"</div>
                         </div>
@@ -27,7 +32,7 @@
                             <div class="cert-free-kingdom">
                                 <div>KINGDOM OF CAMBODIA</div>
                                 <div>NATION&nbsp; RELIGION &nbsp;KING</div>
-                                <img src="assets/Images/border.png" alt="">
+                                <img src="<?= base_url('assets/Images/border.png') ?>" alt="">
                             </div>
                         </div>
                     </div>
@@ -171,6 +176,9 @@ function printOnlyFreeCert() {
             #class-free-cert.certificate-preview .certificate-free-wrap {
                 transform: none !important;
             }
+            /* Force fonts in print */
+            .cert-free-title { font-family: 'UnifrakturCook', cursive !important; }
+            .cert-free-course { font-family: 'Playpen Sans Deva', cursive !important; }
         }
     `;
     document.head.appendChild(style);

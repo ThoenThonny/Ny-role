@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', function() {
         printBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> កំពុងរក្សាទុក...​';
         printBtn.disabled = true;
         
-        fetch('/form/submit', {
+        fetch('/certificate-sys/form/submit', {
             method: 'POST',
             body: formData
         })
