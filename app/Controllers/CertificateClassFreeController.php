@@ -43,10 +43,14 @@ final class CertificateClassFreeController extends Controller
         
         $totalPages = ceil($totalCount / $limit);
 
+        // Get success message from session if exists
+        $message = $_SESSION['message'] ?? '';
+        unset($_SESSION['message']);
+
         $this->view('Pages/class-free-form', [
             'errors' => [],
             'old' => [],
-            'message' => '',
+            'message' => $message,
             'certificates' => $certificates,
             'currentPage' => $page,
             'totalPages' => $totalPages,
@@ -123,7 +127,7 @@ final class CertificateClassFreeController extends Controller
         );
 
         if ($result === false) {
-            $this->view('Form/class-free-form', [
+            $this->view('Pages/class-free-form', [
                 'errors' => ['general' => 'Failed to save certificate request!'],
                 'old' => [
                     'student_name' => $studentName,
@@ -161,7 +165,7 @@ final class CertificateClassFreeController extends Controller
         $latestCertificate = $this->certificateClassFreeModel->getLatest();
 
         // Show form with success message and certificate displayed below
-        $this->view('Form/class-free-form', [
+        $this->view('Pages/class-free-form', [
             'message' => 'Certificate request submitted successfully!',
             'errors' => [],
             'old' => [],
@@ -186,6 +190,17 @@ final class CertificateClassFreeController extends Controller
 
     public function showCertificate(){
         return $this->view("components.certificate.class-free-certificate");
+    }
+
+    // Fix existing records with NULL certificate codes
+    public function fixCertificateCodes(): void
+    {
+        $fixedCount = $this->certificateClassFreeModel->fixPendingCertificates();
+        
+        // Redirect back to the form with success message
+        $_SESSION['message'] = "Fixed {$fixedCount} certificate(s) - status updated to done!";
+        header("Location: /class-free-form");
+        exit;
     }
 
 }

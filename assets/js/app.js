@@ -136,7 +136,7 @@ function printCertificate() {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Certificate of Completion</title>
             <link rel="stylesheet" href="${cssUrl}">
-            <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Cinzel:wght@400;600;700&family=UnifrakturCook:wght@700&family=Playpen+Sans+Deva:wght@100..800&display=swap" rel="stylesheet">
             <style>
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 @page {
