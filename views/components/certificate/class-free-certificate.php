@@ -194,7 +194,7 @@ function printOnlyFreeCert() {
         certWrapper.classList.add('certificate-preview');
     }, 200);
 }
-// Direct print handler
+
 function handlePrint() {
     console.log('handlePrint called');
 
@@ -206,56 +206,16 @@ function handlePrint() {
         }
     }
 
-    const courseInput = document.getElementById('course');
-    const courseName = courseInput ? courseInput.value.trim() : '';
+    // Main flow now lives in form_class_free.php:
+    // print -> ask confirmation -> save to DB on YES.
+    // Keep this as a safe fallback print-only behavior.
+    prepareCertificate();
 
-    if (courseName.length >= 2) {
-
-        fetch('/certificate-sys/api/course/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                course_name: courseName
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-
-            console.log('Course saved:', data);
-
-            // ✅ refresh dropdown immediately
-            if (typeof refreshCourseDropdown === 'function') {
-                refreshCourseDropdown(courseName);
-            }
-
-            prepareCertificate();
-
-            setTimeout(() => {
-                printOnlyFreeCert();
-            }, 150);
-
-        })
-        .catch(err => {
-            console.error('Save failed:', err);
-
-            prepareCertificate();
-
-            setTimeout(() => {
-                printOnlyFreeCert();
-            }, 150);
-        });
-
-    } else {
-
-        prepareCertificate();
-
-        setTimeout(() => {
-            printOnlyFreeCert();
-        }, 150);
-    }
+    setTimeout(() => {
+        printOnlyFreeCert();
+    }, 150);
 }
+
 // Save as PDF handler
 function handleSavePDF() {
     console.log('handleSavePDF called');

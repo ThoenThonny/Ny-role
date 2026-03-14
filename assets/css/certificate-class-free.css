@@ -58,6 +58,7 @@
 .cert-free-outer-border {
     border: 20px solid #20215f;
     padding: 5px;
+    border-radius: 10px;
 }
 
 .cert-free-inner-border {

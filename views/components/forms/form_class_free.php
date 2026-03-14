@@ -13,8 +13,8 @@ if (!isset($generatedId) || empty($generatedId)) {
             <?php echo htmlspecialchars($message) ?>
         </div>
     <?php endif; ?>
-
-    <form method="POST" action="/form/submit" novalidate id="classFreeForm" class="modern-form">
+        
+    <form method="POST" action="<?= e(base_url('form/submit')) ?>" novalidate id="classFreeForm" class="modern-form">
 
         <input type="hidden" id="generated_cert_id" value="<?php echo htmlspecialchars($generatedId) ?>">
 
@@ -111,6 +111,10 @@ if (!isset($generatedId) || empty($generatedId)) {
                     id="btnPrintCertificate" onclick="handlePrint()">
                     <i class="bi bi-printer-fill me-2"></i> បោះពុម្ព
                 </button>
+                <button type="button" class="btn btn-success mt-2 d-none"
+                    id="btnConfirmPrinted">
+                    <i class="bi bi-check2-circle me-2"></i> Confirm Printed & Save
+                </button>
             </div>
         </div>
 
@@ -118,9 +122,10 @@ if (!isset($generatedId) || empty($generatedId)) {
 </div>
 
 <script>
-// Base URL for API calls - ensure it always has a leading slash
-// Use absolute path for API calls - no dynamic base URL needed
-const API_BASE_URL = '/certificate-sys';
+// Dynamic base URL so routes work in both root and subfolder deployments.
+const APP_BASE_URL = <?= json_encode(rtrim(base_url(''), '/')) ?>;
+const API_BASE_URL = APP_BASE_URL;
+const FORM_SUBMIT_URL = APP_BASE_URL + '/form/submit';
 
 // Debug: Log the API base URL
 console.log('API_BASE_URL:', API_BASE_URL);
@@ -396,101 +401,178 @@ document.addEventListener('DOMContentLoaded', function() {
     // Refresh course dropdown on load
     refreshCourseDropdown(courseInput ? courseInput.value : null);
 
-    // Handle Print button click - Save to DB first, then print
+    let isPrintFlowRunning = false;
+    let pendingPrintPayload = null;
+
+    const printBtn = document.getElementById('btnPrintCertificate');
+    const confirmPrintedBtn = document.getElementById('btnConfirmPrinted');
+    const originalPrintBtnText = printBtn ? printBtn.innerHTML : '';
+
+    const showConfirmPrintedButton = function(show) {
+        if (!confirmPrintedBtn) return;
+        confirmPrintedBtn.classList.toggle('d-none', !show);
+        confirmPrintedBtn.disabled = !show;
+    };
+
+    const askPrintedSuccessfully = async function() {
+        if (window.Swal && typeof window.Swal.fire === 'function') {
+            const result = await window.Swal.fire({
+                icon: 'question',
+                title: 'Print Confirmation',
+                text: 'Printed successfully?',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Save',
+                cancelButtonText: 'No',
+                reverseButtons: true
+            });
+            return result.isConfirmed === true;
+        }
+
+        return window.confirm('Printed successfully?');
+    };
+
+    const showSaveSuccess = async function() {
+        if (window.Swal && typeof window.Swal.fire === 'function') {
+            await window.Swal.fire({
+                icon: 'success',
+                title: 'Saved',
+                text: 'Saved to database successfully.'
+            });
+            return;
+        }
+
+        alert('Saved to database successfully.');
+    };
+
+    const showSaveError = async function() {
+        if (window.Swal && typeof window.Swal.fire === 'function') {
+            await window.Swal.fire({
+                icon: 'error',
+                title: 'Save Failed',
+                text: 'Error saving certificate. Please try again.'
+            });
+            return;
+        }
+
+        alert('Error saving certificate. Please try again.');
+    };
+
+    const savePendingPrintToDatabase = async function() {
+        if (!pendingPrintPayload) {
+            return;
+        }
+
+        const shouldSave = await askPrintedSuccessfully();
+        if (!shouldSave) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('student_name', pendingPrintPayload.student_name);
+        formData.append('course', pendingPrintPayload.course);
+        formData.append('end_date', pendingPrintPayload.end_date);
+
+        if (printBtn) {
+            printBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> Saving...';
+            printBtn.disabled = true;
+        }
+        if (confirmPrintedBtn) {
+            confirmPrintedBtn.disabled = true;
+        }
+
+        try {
+            const res = await fetch(FORM_SUBMIT_URL, {
+                method: 'POST',
+                body: formData
+            });
+            if (!res.ok) {
+                const responseText = await res.text();
+                throw new Error(`Submit failed (${res.status}): ${responseText.slice(0, 200)}`);
+            }
+            await res.text();
+
+            const savedCourse = pendingPrintPayload.course;
+            pendingPrintPayload = null;
+            showConfirmPrintedButton(false);
+            await showSaveSuccess();
+            refreshCourseDropdown(savedCourse || null);
+        } catch (err) {
+            console.error('Error saving certificate:', err);
+            await showSaveError();
+            if (confirmPrintedBtn) {
+                confirmPrintedBtn.disabled = false;
+            }
+        } finally {
+            if (printBtn) {
+                printBtn.innerHTML = originalPrintBtnText;
+                printBtn.disabled = false;
+            }
+        }
+    };
+
+    if (confirmPrintedBtn) {
+        confirmPrintedBtn.addEventListener('click', function() {
+            savePendingPrintToDatabase();
+        });
+    }
+
+    // Handle Print button click:
+    // 1) Open print dialog
+    // 2) No auto-popup on cancel/close
+    // 3) User clicks "Confirm Printed & Save" to save
     window.handlePrint = function() {
-        // Validate required fields
+        if (isPrintFlowRunning) {
+            return false;
+        }
+
         const studentName = document.getElementById('student_name');
         const course = document.getElementById('course');
         const endDate = document.getElementById('end_date');
-        
-        let isValid = true;
-        
-        // Check student_name
-        if (!studentName || studentName.value.trim() === '') {
-            isValid = false;
-            studentName.classList.add('error');
-            if (studentName.closest('.form-group')) {
-                let errorDiv = studentName.closest('.form-group').querySelector('.error-message');
-                if (!errorDiv) {
-                    errorDiv = document.createElement('div');
-                    errorDiv.className = 'error-message';
-                    errorDiv.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i>Full Name is required!';
-                    studentName.closest('.form-group').appendChild(errorDiv);
-                }
-            }
-        }
-        
-        // Check course
-        if (!course || course.value.trim() === '') {
-            isValid = false;
-            course.classList.add('error');
-            if (course.closest('.form-group')) {
-                let errorDiv = course.closest('.form-group').querySelector('.error-message');
-                if (!errorDiv) {
-                    errorDiv = document.createElement('div');
-                    errorDiv.className = 'error-message';
-                    errorDiv.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i>Course is required!';
-                    course.closest('.form-group').appendChild(errorDiv);
-                }
-            }
-        }
-        
-        // Check end_date
-        if (!endDate || endDate.value.trim() === '') {
-            isValid = false;
-            endDate.classList.add('error');
-            if (endDate.closest('.form-group')) {
-                let errorDiv = endDate.closest('.form-group').querySelector('.error-message');
-                if (!errorDiv) {
-                    errorDiv = document.createElement('div');
-                    errorDiv.className = 'error-message';
-                    errorDiv.innerHTML = '<i class="bi bi-exclamation-circle-fill me-1"></i>End Date is required!';
-                    endDate.closest('.form-group').appendChild(errorDiv);
-                }
-            }
-        }
-        
-        if (!isValid) {
+
+        if (!validateForm()) {
             return false;
         }
-        
-        // Submit form data via AJAX first
-        const formData = new FormData();
-        formData.append('student_name', studentName.value.trim());
-        formData.append('course', course.value.trim());
-        formData.append('end_date', endDate.value);
-        
-        // Show loading indicator
-        const printBtn = document.getElementById('btnPrintCertificate');
-        const originalText = printBtn.innerHTML;
-        printBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> កំពុងរក្សាទុក...​';
-        printBtn.disabled = true;
-        
-        fetch('/certificate-sys/form/submit', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.text())
-        .then(html => {
-            // After successful save, trigger print
-            printBtn.innerHTML = originalText;
-            printBtn.disabled = false;
-            
-            // Call the print function from app.js
-            if (typeof printCertificate === 'function') {
-                printCertificate();
-            } else {
-                // Fallback to window.print()
-                window.print();
+
+        pendingPrintPayload = {
+            student_name: studentName.value.trim(),
+            course: course.value.trim(),
+            end_date: endDate.value
+        };
+        showConfirmPrintedButton(false);
+
+        let finished = false;
+        const finishPrintFlow = function() {
+            if (finished) return;
+            finished = true;
+            isPrintFlowRunning = false;
+            window.removeEventListener('afterprint', finishPrintFlow);
+            showConfirmPrintedButton(true);
+        };
+
+        isPrintFlowRunning = true;
+        window.addEventListener('afterprint', finishPrintFlow);
+
+        // Fallback: release UI even if afterprint does not fire.
+        setTimeout(function() {
+            if (!finished) {
+                finishPrintFlow();
             }
-        })
-        .catch(err => {
-            console.error('Error saving certificate:', err);
-            printBtn.innerHTML = originalText;
-            printBtn.disabled = false;
-            alert('Error saving certificate. Please try again.');
-        });
-        
+        }, 1600);
+
+        if (typeof prepareCertificate === 'function') {
+            prepareCertificate();
+        }
+
+        if (typeof printOnlyFreeCert === 'function') {
+            printOnlyFreeCert();
+        } else if (typeof printCertificate === 'function') {
+            // Fallback for pages that do not include class-free print helpers
+            printCertificate();
+        } else {
+            // Last fallback
+            window.print();
+        }
+
         return false;
     };
 });
