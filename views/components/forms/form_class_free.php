@@ -13,8 +13,8 @@ if (!isset($generatedId) || empty($generatedId)) {
             <?php echo htmlspecialchars($message) ?>
         </div>
     <?php endif; ?>
-
-    <form method="POST" action="/form/submit" novalidate id="classFreeForm" class="modern-form">
+        
+    <form method="POST" action="<?= e(base_url('form/submit')) ?>" novalidate id="classFreeForm" class="modern-form">
 
         <input type="hidden" id="generated_cert_id" value="<?php echo htmlspecialchars($generatedId) ?>">
 
@@ -118,9 +118,10 @@ if (!isset($generatedId) || empty($generatedId)) {
 </div>
 
 <script>
-// Base URL for API calls - ensure it always has a leading slash
-// Use absolute path for API calls - no dynamic base URL needed
-const API_BASE_URL = '/certificate-sys';
+// Dynamic base URL so routes work in both root and subfolder deployments.
+const APP_BASE_URL = <?= json_encode(rtrim(base_url(''), '/')) ?>;
+const API_BASE_URL = APP_BASE_URL;
+const FORM_SUBMIT_URL = APP_BASE_URL + '/form/submit';
 
 // Debug: Log the API base URL
 console.log('API_BASE_URL:', API_BASE_URL);
@@ -395,5 +396,151 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Refresh course dropdown on load
     refreshCourseDropdown(courseInput ? courseInput.value : null);
+
+    let isPrintFlowRunning = false;
+    let pendingPrintPayload = null;
+
+    const printBtn = document.getElementById('btnPrintCertificate');
+    const originalPrintBtnText = printBtn ? printBtn.innerHTML : '';
+
+    const askPrintedSuccessfully = async function() {
+        if (window.Swal && typeof window.Swal.fire === 'function') {
+            const result = await window.Swal.fire({
+                icon: 'question',
+                title: 'Print Confirmation',
+                text: 'Printed successfully?',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                reverseButtons: true
+            });
+            return result.isConfirmed === true;
+        }
+
+        return window.confirm('Printed successfully?');
+    };
+
+    const showSaveError = async function() {
+        if (window.Swal && typeof window.Swal.fire === 'function') {
+            await window.Swal.fire({
+                icon: 'error',
+                title: 'Save Failed',
+                text: 'Error saving certificate. Please try again.'
+            });
+            return;
+        }
+
+        alert('Error saving certificate. Please try again.');
+    };
+
+    const savePendingPrintToDatabase = async function() {
+        if (!pendingPrintPayload) {
+            return;
+        }
+
+        const shouldSave = await askPrintedSuccessfully();
+        if (!shouldSave) {
+            pendingPrintPayload = null;
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('student_name', pendingPrintPayload.student_name);
+        formData.append('course', pendingPrintPayload.course);
+        formData.append('end_date', pendingPrintPayload.end_date);
+
+        if (printBtn) {
+            printBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> Saving...';
+            printBtn.disabled = true;
+        }
+
+        try {
+            const res = await fetch(FORM_SUBMIT_URL, {
+                method: 'POST',
+                body: formData
+            });
+            if (!res.ok) {
+                const responseText = await res.text();
+                throw new Error(`Submit failed (${res.status}): ${responseText.slice(0, 200)}`);
+            }
+            await res.text();
+
+            const savedCourse = pendingPrintPayload.course;
+            pendingPrintPayload = null;
+            refreshCourseDropdown(savedCourse || null);
+        } catch (err) {
+            console.error('Error saving certificate:', err);
+            await showSaveError();
+        } finally {
+            if (printBtn) {
+                printBtn.innerHTML = originalPrintBtnText;
+                printBtn.disabled = false;
+            }
+        }
+    };
+
+    // Handle Print button click:
+    // 1) Open print dialog
+    // 2) Show confirmation popup after print dialog closes
+    // 3) Save only when user confirms
+    window.handlePrint = function() {
+        if (isPrintFlowRunning) {
+            return false;
+        }
+
+        const studentName = document.getElementById('student_name');
+        const course = document.getElementById('course');
+        const endDate = document.getElementById('end_date');
+
+        if (!validateForm()) {
+            return false;
+        }
+
+        pendingPrintPayload = {
+            student_name: studentName.value.trim(),
+            course: course.value.trim(),
+            end_date: endDate.value
+        };
+
+        let finished = false;
+        const finishPrintFlow = async function() {
+            if (finished) return;
+            finished = true;
+            isPrintFlowRunning = false;
+            window.removeEventListener('afterprint', finishPrintFlow);
+            window.removeEventListener('focus', finishPrintFlow);
+            window.removeEventListener('freecert:print-finished', finishPrintFlow);
+            await savePendingPrintToDatabase();
+        };
+
+        isPrintFlowRunning = true;
+        window.addEventListener('afterprint', finishPrintFlow);
+        // Safari/edge cases: focus typically returns after print dialog closes.
+        window.addEventListener('focus', finishPrintFlow);
+        window.addEventListener('freecert:print-finished', finishPrintFlow);
+
+        // Fallback: release UI even if afterprint does not fire.
+        setTimeout(function() {
+            if (!finished) {
+                finishPrintFlow();
+            }
+        }, 2200);
+
+        if (typeof prepareCertificate === 'function') {
+            prepareCertificate();
+        }
+
+        if (typeof printOnlyFreeCert === 'function') {
+            printOnlyFreeCert();
+        } else if (typeof printCertificate === 'function') {
+            // Fallback for pages that do not include class-free print helpers
+            printCertificate();
+        } else {
+            // Last fallback
+            window.print();
+        }
+
+        return false;
+    };
 });
 </script>

@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-        <link href="<?= base_url('assets/css/certificate-class-free.css') ?>" rel="stylesheet">
+    <?php require_once __DIR__ . '/../../../app/helpers.php'; ?>
+    <!-- Google Fonts for Certificate -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=Playpen+Sans+Deva:ital@1&display=swap" rel="stylesheet">
+    <link href="<?= base_url('assets/css/certificate-class-free.css') ?>" rel="stylesheet">
 </head>
 <body>
     <!-- ==================== CERTIFICATE COMPONENT ==================== -->
@@ -19,7 +24,7 @@
                     <div class="cert-free-header">
                         <div class="cert-free-header-left">
                             <div class="cert-free-logo-box">
-                                <img src="assets/Images/logo.png" alt="">
+                                <img src="<?= base_url('assets/Images/logo.png') ?>" alt="">
                             </div>
                             <div class="cert-free-motto">"Build your IT Skill"</div>
                         </div>
@@ -27,7 +32,7 @@
                             <div class="cert-free-kingdom">
                                 <div>KINGDOM OF CAMBODIA</div>
                                 <div>NATION&nbsp; RELIGION &nbsp;KING</div>
-                                <img src="assets/Images/border.png" alt="">
+                                <img src="<?= base_url('assets/Images/border.png') ?>" alt="">
                             </div>
                         </div>
                     </div>
@@ -129,18 +134,13 @@ function loadSavedData() {
     }
 }
 
-// Generate a unique certificate ID
-function generateCertificateId() {
-    const year = new Date().getFullYear();
-    const random4 = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-    return year + random4 + 'ETEC';
-}
-
-// Prepare certificate before print
+// Prepare certificate before print.
+// Use PHP-generated ID from hidden input; do not create random client IDs.
 function prepareCertificate() {
+    const generatedInput = document.getElementById('generated_cert_id');
     const certIdElement = document.getElementById('cert_id_val_free');
-    if (certIdElement) {
-        certIdElement.textContent = generateCertificateId();
+    if (generatedInput && certIdElement && generatedInput.value) {
+        certIdElement.textContent = generatedInput.value;
     }
     return true;
 }
@@ -148,7 +148,11 @@ function prepareCertificate() {
 // ─── Print using CSS isolation (cleaner approach) ───────────
 function printOnlyFreeCert() {
     const certWrapper = document.getElementById('class-free-cert');
-    if (!certWrapper) { window.print(); return; }
+    if (!certWrapper) {
+        window.print();
+        window.dispatchEvent(new Event('freecert:print-finished'));
+        return;
+    }
 
     // ✅ Create a temporary <style> tag that hides EVERYTHING except our cert
     const style = document.createElement('style');
@@ -171,6 +175,9 @@ function printOnlyFreeCert() {
             #class-free-cert.certificate-preview .certificate-free-wrap {
                 transform: none !important;
             }
+            /* Force fonts in print */
+            .cert-free-title { font-family: 'UnifrakturCook', cursive !important; }
+            .cert-free-course { font-family: 'Courier New', monospace; !important;}
         }
     `;
     document.head.appendChild(style);
@@ -184,9 +191,10 @@ function printOnlyFreeCert() {
         const s = document.getElementById('print-isolation-style');
         if (s) s.remove();
         certWrapper.classList.add('certificate-preview');
+        window.dispatchEvent(new Event('freecert:print-finished'));
     }, 200);
 }
-// Direct print handler
+
 function handlePrint() {
     console.log('handlePrint called');
 
@@ -198,56 +206,16 @@ function handlePrint() {
         }
     }
 
-    const courseInput = document.getElementById('course');
-    const courseName = courseInput ? courseInput.value.trim() : '';
+    // Main flow now lives in form_class_free.php:
+    // print -> ask confirmation -> save to DB on YES.
+    // Keep this as a safe fallback print-only behavior.
+    prepareCertificate();
 
-    if (courseName.length >= 2) {
-
-        fetch('/certificate-sys/api/course/save', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                course_name: courseName
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-
-            console.log('Course saved:', data);
-
-            // ✅ refresh dropdown immediately
-            if (typeof refreshCourseDropdown === 'function') {
-                refreshCourseDropdown(courseName);
-            }
-
-            prepareCertificate();
-
-            setTimeout(() => {
-                printOnlyFreeCert();
-            }, 150);
-
-        })
-        .catch(err => {
-            console.error('Save failed:', err);
-
-            prepareCertificate();
-
-            setTimeout(() => {
-                printOnlyFreeCert();
-            }, 150);
-        });
-
-    } else {
-
-        prepareCertificate();
-
-        setTimeout(() => {
-            printOnlyFreeCert();
-        }, 150);
-    }
+    setTimeout(() => {
+        printOnlyFreeCert();
+    }, 150);
 }
+
 // Save as PDF handler
 function handleSavePDF() {
     console.log('handleSavePDF called');

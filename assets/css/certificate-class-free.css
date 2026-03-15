@@ -58,10 +58,11 @@
 .cert-free-outer-border {
     border: 20px solid #20215f;
     padding: 5px;
+    border-radius: 10px;
 }
 
 .cert-free-inner-border {
-    border: 15px solid #5e5f65b2;
+    border: 15px solid #bec11ab2;
     padding: 15px 25px 15px;
     background: #fff;
     height: 100%;
@@ -149,25 +150,30 @@
     font-size: 1.5rem;
     color: #20215f;
     /* line-height: 1.8; */
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
     font-family: 'Times New Roman', Times, serif;
     letter-spacing: .01em;
     white-space: nowrap;
 }
 
 .cert-free-course {
-    margin: auto;
-    width: 600px;
+    /* Keep horizontal centering only; auto vertical margins create random top gaps in print flex layout */
+    margin: 10px auto;
+    width: 500px;
     /* background-color: rgba(0, 0, 0, 0.392); */
     text-align: center;
     font-size: 1.5rem;
     color: black;
     letter-spacing: .07em;
-    margin-bottom: 12px;
+    line-height: 1.25;
+    min-height: 2.5rem; /* reserve space so short and long course names align similarly */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: 'Courier New', monospace;
-    font-weight: 900;
+    font-weight: bolder;
 
-    white-space: normal;   /* allow new line */
+    /* white-space: normal;   allow new line */
     word-wrap: break-word; /* break long text */
 }
 
@@ -260,11 +266,6 @@
         size: A4 landscape;
         margin: 0;
     }
-    /* "default"?? "null"
-       "false"??"null"
-       "default"??"false"
-       
-     */
 
     html, body {
         width: 297mm !important;
@@ -293,9 +294,8 @@
 
     .certificate-free {
         width: 297mm !important;
-        height: 207mm !important;
+        height: 210mm !important;
         padding: 5mm !important;
-        margin: auto !important;
         box-sizing: border-box !important;
         box-shadow: none !important;
     }
@@ -322,33 +322,4 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
-}
-
-/* Remove default select arrow */
-#course_filter {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: none !important;
-}
-
-/* Hide arrow for old Edge/IE */
-#course_filter::-ms-expand {
-    display: none;
-}
-
-/* Fix spacing after removing arrow */
-#course_filter {
-    padding-right: 10px;
-}
-
-.input-wrapper select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: none !important;
-}
-
-.input-wrapper select::-ms-expand {
-    display: none;
 }
