@@ -111,10 +111,6 @@ if (!isset($generatedId) || empty($generatedId)) {
                     id="btnPrintCertificate" onclick="handlePrint()">
                     <i class="bi bi-printer-fill me-2"></i> បោះពុម្ព
                 </button>
-                <button type="button" class="btn btn-success mt-2 d-none"
-                    id="btnConfirmPrinted">
-                    <i class="bi bi-check2-circle me-2"></i> Confirm Printed & Save
-                </button>
             </div>
         </div>
 
@@ -405,14 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let pendingPrintPayload = null;
 
     const printBtn = document.getElementById('btnPrintCertificate');
-    const confirmPrintedBtn = document.getElementById('btnConfirmPrinted');
     const originalPrintBtnText = printBtn ? printBtn.innerHTML : '';
-
-    const showConfirmPrintedButton = function(show) {
-        if (!confirmPrintedBtn) return;
-        confirmPrintedBtn.classList.toggle('d-none', !show);
-        confirmPrintedBtn.disabled = !show;
-    };
 
     const askPrintedSuccessfully = async function() {
         if (window.Swal && typeof window.Swal.fire === 'function') {
@@ -421,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 title: 'Print Confirmation',
                 text: 'Printed successfully?',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, Save',
+                confirmButtonText: 'Yes',
                 cancelButtonText: 'No',
                 reverseButtons: true
             });
@@ -464,6 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const shouldSave = await askPrintedSuccessfully();
         if (!shouldSave) {
+            pendingPrintPayload = null;
             return;
         }
 
@@ -475,9 +465,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (printBtn) {
             printBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i> Saving...';
             printBtn.disabled = true;
-        }
-        if (confirmPrintedBtn) {
-            confirmPrintedBtn.disabled = true;
         }
 
         try {
@@ -493,15 +480,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const savedCourse = pendingPrintPayload.course;
             pendingPrintPayload = null;
-            showConfirmPrintedButton(false);
             await showSaveSuccess();
             refreshCourseDropdown(savedCourse || null);
         } catch (err) {
             console.error('Error saving certificate:', err);
             await showSaveError();
-            if (confirmPrintedBtn) {
-                confirmPrintedBtn.disabled = false;
-            }
         } finally {
             if (printBtn) {
                 printBtn.innerHTML = originalPrintBtnText;
@@ -510,16 +493,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    if (confirmPrintedBtn) {
-        confirmPrintedBtn.addEventListener('click', function() {
-            savePendingPrintToDatabase();
-        });
-    }
-
     // Handle Print button click:
     // 1) Open print dialog
-    // 2) No auto-popup on cancel/close
-    // 3) User clicks "Confirm Printed & Save" to save
+    // 2) Show confirmation popup after print dialog closes
+    // 3) Save only when user confirms
     window.handlePrint = function() {
         if (isPrintFlowRunning) {
             return false;
@@ -538,26 +515,30 @@ document.addEventListener('DOMContentLoaded', function() {
             course: course.value.trim(),
             end_date: endDate.value
         };
-        showConfirmPrintedButton(false);
 
         let finished = false;
-        const finishPrintFlow = function() {
+        const finishPrintFlow = async function() {
             if (finished) return;
             finished = true;
             isPrintFlowRunning = false;
             window.removeEventListener('afterprint', finishPrintFlow);
-            showConfirmPrintedButton(true);
+            window.removeEventListener('focus', finishPrintFlow);
+            window.removeEventListener('freecert:print-finished', finishPrintFlow);
+            await savePendingPrintToDatabase();
         };
 
         isPrintFlowRunning = true;
         window.addEventListener('afterprint', finishPrintFlow);
+        // Safari/edge cases: focus typically returns after print dialog closes.
+        window.addEventListener('focus', finishPrintFlow);
+        window.addEventListener('freecert:print-finished', finishPrintFlow);
 
         // Fallback: release UI even if afterprint does not fire.
         setTimeout(function() {
             if (!finished) {
                 finishPrintFlow();
             }
-        }, 1600);
+        }, 2200);
 
         if (typeof prepareCertificate === 'function') {
             prepareCertificate();

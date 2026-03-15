@@ -329,9 +329,10 @@ function openCertificateFree(studentName, course, endDate) {
         certTime.textContent = formatCertificateDate(endDate);
     }
     if (certIdElement) {
-        const year = new Date().getFullYear();
-        const random4 = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-        certIdElement.textContent = year + random4 + 'ETEC';
+        const generatedInput = document.getElementById('generated_cert_id');
+        if (generatedInput && generatedInput.value) {
+            certIdElement.textContent = generatedInput.value;
+        }
     }
 
     if (course) localStorage.setItem('certificate_course', course);
