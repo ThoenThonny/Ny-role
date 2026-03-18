@@ -18,17 +18,22 @@ final class CertificateClassFreeModel
 
     /**
      * Create a new certificate class-free request
+     * Automatically generates certificate code and sets status to 'done'
      */
     public function create(string $studentName, string $course, string $endDate): int|false
     {
+        // Generate certificate code automatically
+        $certificateCode = generateCertificateId();
+        
         $stmt = $this->db->prepare(
-            "INSERT INTO certificate_class_free (student_name, course, end_date, status) 
-             VALUES (:student_name, :course, :end_date, 'pending')"
+            "INSERT INTO certificate_class_free (student_name, course, end_date, certificate_code, status) 
+             VALUES (:student_name, :course, :end_date, :certificate_code, 'done')"
         );
 
         $stmt->bindValue(':student_name', strtoupper($studentName), PDO::PARAM_STR);
         $stmt->bindValue(':course', $course, PDO::PARAM_STR);
         $stmt->bindValue(':end_date', $endDate, PDO::PARAM_STR);
+        $stmt->bindValue(':certificate_code', $certificateCode, PDO::PARAM_STR);
 
         if ($stmt->execute()) {
             return (int) $this->db->lastInsertId();
@@ -117,6 +122,79 @@ final class CertificateClassFreeModel
     }
 
     /**
+     * Update certificate code and status for an existing record
+     */
+    public function updateCertificateCode(int $id): bool
+    {
+        // Generate new certificate code
+        $certificateCode = generateCertificateId();
+        
+        $stmt = $this->db->prepare(
+            "UPDATE certificate_class_free SET certificate_code = :certificate_code, status = 'done' WHERE id = :id"
+        );
+
+        $stmt->bindValue(':certificate_code', $certificateCode, PDO::PARAM_STR);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    /**
+     * Fix all records with NULL certificate_code
+     * Generates certificate codes and sets status to 'done'
+     */
+    public function fixNullCertificateCodes(): int
+    {
+        // Get all records with NULL certificate_code
+        $stmt = $this->db->query(
+            "SELECT id FROM certificate_class_free WHERE certificate_code IS NULL OR certificate_code = ''"
+        );
+        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $fixedCount = 0;
+        foreach ($records as $record) {
+            if ($this->updateCertificateCode((int)$record['id'])) {
+                $fixedCount++;
+            }
+        }
+        
+        return $fixedCount;
+    }
+
+    /**
+     * Fix all records with pending status - generate certificate code and set to done
+     */
+    public function fixPendingCertificates(): int
+    {
+        // Get all records with pending status (regardless of certificate_code)
+        $stmt = $this->db->query(
+            "SELECT id, certificate_code FROM certificate_class_free WHERE status = 'pending' ORDER BY id"
+        );
+        $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $fixedCount = 0;
+        foreach ($records as $record) {
+            // Generate certificate code if NULL or empty
+            $certificateCode = $record['certificate_code'];
+            if (empty($certificateCode)) {
+                $certificateCode = generateCertificateId();
+            }
+            
+            $stmt = $this->db->prepare(
+                "UPDATE certificate_class_free SET certificate_code = :certificate_code, status = 'done' WHERE id = :id"
+            );
+            $stmt->bindValue(':certificate_code', $certificateCode, PDO::PARAM_STR);
+            $stmt->bindValue(':id', (int)$record['id'], PDO::PARAM_INT);
+            
+            if ($stmt->execute()) {
+                $fixedCount++;
+            }
+        }
+        
+        return $fixedCount;
+    }
+
+    /**
      * Delete certificate class-free request
      */
     public function delete(int $id): bool
@@ -127,5 +205,109 @@ final class CertificateClassFreeModel
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
         return $stmt->execute();
+    }
+
+    /**
+     * Get the latest certificate class-free request
+     */
+    public function getLatest(): array|false
+    {
+        try {
+            $sql = "SELECT * FROM certificate_class_free ORDER BY created_at DESC LIMIT 1";
+            $stmt = $this->db->query($sql);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: false;
+        } catch (\PDOException $e) {
+            error_log("Error fetching latest certificate: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Save a custom course to course_custom table
+     * Uses INSERT IGNORE to avoid duplicates
+     */
+    public function saveCustomCourse(string $courseName): bool
+    {
+        try {
+            $stmt = $this->db->prepare(
+                "INSERT IGNORE INTO course_custom (course_name) VALUES (:course_name)"
+            );
+            $stmt->bindValue(':course_name', trim($courseName), PDO::PARAM_STR);
+            return $stmt->execute();
+        } catch (\PDOException $e) {
+            error_log("Error saving custom course: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Get all custom courses ordered alphabetically
+     */
+    public function getAllCourses(): array
+    {
+        try {
+            $sql = "SELECT course_name FROM course_custom ORDER BY course_name ASC";
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (\PDOException $e) {
+            error_log("Error fetching courses: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get paginated certificate class-free requests with optional course filter
+     */
+    public function getAllPaginatedWithFilter(int $page = 1, int $limit = 5, ?string $courseFilter = null): array
+    {
+        try {
+            $offset = ($page - 1) * $limit;
+            
+            if ($courseFilter !== null && $courseFilter !== '') {
+                $sql = "SELECT * FROM certificate_class_free 
+                        WHERE course = :course 
+                        ORDER BY created_at DESC 
+                        LIMIT :limit OFFSET :offset";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindValue(':course', $courseFilter, PDO::PARAM_STR);
+                $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            } else {
+                $sql = "SELECT * FROM certificate_class_free ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            }
+            
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (\PDOException $e) {
+            error_log("Error fetching paginated certificates with filter: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get total count of certificate class-free requests with optional course filter
+     */
+    public function getCountWithFilter(?string $courseFilter = null): int
+    {
+        try {
+            if ($courseFilter !== null && $courseFilter !== '') {
+                $sql = "SELECT COUNT(*) as total FROM certificate_class_free WHERE course = :course";
+                $stmt = $this->db->prepare($sql);
+                $stmt->bindValue(':course', $courseFilter, PDO::PARAM_STR);
+                $stmt->execute();
+            } else {
+                $sql = "SELECT COUNT(*) as total FROM certificate_class_free";
+                $stmt = $this->db->query($sql);
+            }
+            
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int) ($result['total'] ?? 0);
+        } catch (\PDOException $e) {
+            error_log("Error counting certificates with filter: " . $e->getMessage());
+            return 0;
+        }
     }
 }

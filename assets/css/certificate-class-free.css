@@ -1,0 +1,325 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Cinzel:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans+Deva:wght@100..800&display=swap');
+.certificate-free-wrapper {
+    background: var(--app-card-bg);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    height: 470px !important;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.1);
+}
+
+/* ── Certificate Preview Mode (Zoom Out for Form View) ──────────────────────── */
+.certificate-free-wrapper.certificate-preview {
+    padding: 10px;
+    overflow: auto;
+}
+
+.certificate-free-wrapper.certificate-preview .certificate-free-wrap {
+    transform: scale(0.55);
+    transform-origin: top center;
+    -webkit-transform: scale(0.55);
+    -webkit-transform-origin: top center;
+}
+
+/* Adjust wrapper height in preview mode */
+.certificate-free-wrapper.certificate-preview {
+    min-height: 400px;
+    height: auto;
+}
+
+/* ── Certificate Design ─────────────────────────────────────────────────────── */
+.certificate-free-wrap {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.certificate-free {
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    min-height: 350px;
+    padding: 5mm;
+}
+
+.cert-free-outer-border {
+    border: 20px solid #20215f;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.cert-free-inner-border {
+    border: 15px solid #bec11ab2;
+    padding: 15px 25px 15px;
+    background: #fff;
+    height: 100%;
+}
+
+.cert-free-kingdom {
+    text-align: center;
+    /* margin-bottom: 6px; */
+    font-size: 1.2rem;
+    font-weight: bolder;
+    letter-spacing: .08em;
+    color: #222;
+    line-height: 2;
+    text-transform: uppercase;
+    font-family: 'Courier New', monospace;
+    white-space: nowrap;
+}
+.cert-free-kingdom img {
+    display: block;
+    max-width: 150px;
+    height: auto;
+    margin: 4px auto 0;
+    object-fit: contain;
+}
+
+.cert-free-logo-box {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.cert-free-logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cert-free-motto {
+    font-size: 1.2rem;
+    color: #333;
+    /* margin-top: 4px; */
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    white-space: nowrap;
+}
+
+.cert-free-title {
+    text-align: center;
+    font-family: "UnifrakturCook", cursive;
+    font-size: 4.2rem;
+    font-weight: 700;
+    color: #20215f;
+    white-space: nowrap;
+}
+
+.cert-free-certify {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #20215f;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.cert-free-student-name {
+    text-align: center;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #1b2a6b;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-family: "Playpen Sans Deva", cursive;
+    font-style: italic;
+
+    /* outline effect like your screenshot */
+    -webkit-text-stroke: 1px black;
+}
+
+.cert-free-desc {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #20215f;
+    /* line-height: 1.8; */
+    /* margin-bottom: 10px; */
+    font-family: 'Times New Roman', Times, serif;
+    letter-spacing: .01em;
+    white-space: nowrap;
+}
+
+.cert-free-course {
+    /* Keep horizontal centering only; auto vertical margins create random top gaps in print flex layout */
+    margin: 10px auto;
+    width: 500px;
+    /* background-color: rgba(0, 0, 0, 0.392); */
+    text-align: center;
+    font-size: 1.5rem;
+    color: black;
+    letter-spacing: .07em;
+    line-height: 1.25;
+    min-height: 2.5rem; /* reserve space so short and long course names align similarly */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    font-weight: bolder;
+
+    /* white-space: normal;   allow new line */
+    word-wrap: break-word; /* break long text */
+}
+
+.cert-free-granted {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d2e81;
+    letter-spacing: .05em;
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+    white-space: nowrap;
+}
+
+.cert-free-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-top: 5px;
+    position: relative;
+}
+
+.cert-free-signature {
+    text-align: right;
+    margin-left: auto;
+}
+
+.cert-free-sig-line {
+    height: 1px;
+    background: #cea324;
+    width: 200px;
+    margin-left: auto;
+    margin-bottom: 4px;
+}
+
+.cert-free-sig-name {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #111;
+    font-family: 'Courier New', monospace;
+    letter-spacing: .05em;
+    white-space: nowrap;
+}
+
+.cert-free-sig-role {
+    font-size: 1rem;
+    color: #333;
+    font-family: 'Courier New', monospace;
+    letter-spacing: .07em;
+    white-space: nowrap;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Certificate Header - Logo Left, Kingdom Right */
+.cert-free-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    /* margin-bottom: 20px; */
+}
+
+.cert-free-header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cert-free-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.cert-free-id-bottom {
+    text-align: center;
+    font-size: 1rem;
+    color: red;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    letter-spacing: .04em;
+    white-space: nowrap;
+}
+
+/* ================= PRINT FIX - Only show #class-free-cert ================= */
+@media print {
+
+    /* ចាំ fix this cher */
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+
+    html, body {
+        width: 297mm !important;
+        height: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+
+    #class-free-cert {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 297mm !important;
+        height: 210mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .certificate-free-wrap {
+        transform: none !important;
+        width: 297mm !important;
+        height: 210mm !important;
+    }
+
+    .certificate-free {
+        width: 297mm !important;
+        height: 210mm !important;
+        padding: 5mm !important;
+        box-sizing: border-box !important;
+        box-shadow: none !important;
+    }
+
+    .cert-free-outer-border {
+        width: 100% !important;
+        height: 100% !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .cert-free-inner-border {
+        flex: 1 !important;
+        min-height: 0 !important;
+        height: unset !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}

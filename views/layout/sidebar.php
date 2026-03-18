@@ -24,13 +24,13 @@ $isDashboard   = str_contains($path, 'dashboard');
     <ul class="list-unstyled sidebar-nav">
 
         <!-- Dashboard -->
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <a class="nav-link <?= $isDashboard ? 'active' : '' ?>"
                href="<?= base_url('dashboard') ?>">
                 <i class="bi bi-speedometer2 nav-icon"></i>
                 <span>ផ្ទាំងគ្រប់គ្រង</span>
             </a>
-        </li>
+        </li> -->
 
         <!-- Certificates -->
         <li class="nav-item nav-dropdown">
@@ -47,16 +47,16 @@ $isDashboard   = str_contains($path, 'dashboard');
 
             <div class="collapse <?= $isCertSection ? 'show' : '' ?>" id="certMenu">
                 <div class="nav-submenu">
-                    <a class="nav-link <?= $isNormal ? 'active' : '' ?>"
-                       href="<?= base_url('certificate?type=normal') ?>">
-                        <i class="bi bi-file-earmark-text nav-icon"></i>
-                        <span>សញ្ញាបត្រធម្មតា</span>
-                    </a>
                     <a class="nav-link <?= $isFree ? 'active' : '' ?>"
                        href="<?= base_url('certificate?type=free') ?>">
                         <i class="bi bi-gift nav-icon"></i>
                         <span>សញ្ញាបត្រឥតគិតថ្លៃ</span>
                     </a>
+                    <a class="nav-link <?= $isNormal ? 'active' : '' ?>"
+                       href="<?= base_url('certificate?type=normal') ?>">
+                        <i class="bi bi-file-earmark-text nav-icon"></i>
+                        <span>សញ្ញាបត្រធម្មតា</span>
+                    </a>      
                     <a class="nav-link <?= $isScholarship ? 'active' : '' ?>"
                        href="<?= base_url('certificate?type=scholarship') ?>">
                         <i class="bi bi-mortarboard nav-icon"></i>

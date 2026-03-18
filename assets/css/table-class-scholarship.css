@@ -1,60 +1,104 @@
-    /* Custom styles to match the image UI exactly */
-    .scholarship-card {
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
+/* Exact Match CSS for the new UI */
+    .custom-card {
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
         background-color: #fff;
+        overflow: hidden; /* Keeps the top corners rounded over the dark blue header */
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    .scholarship-header {
-        background-color: #313384 !important; /* Dark Blue header matches image */
+    
+    .custom-card-header {
+        background-color: #2c3182 !important; /* Dark Blue */
         color: white;
         padding: 10px 20px;
         font-weight: bold;
         font-size: 1.1rem;
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
     }
-    .scholarship-table { 
+    
+    /* This padding creates the white space around the table like in your image */
+    .custom-card-body {
+        padding: 20px; 
+    }
+
+    .custom-table {
         margin-bottom: 0;
         width: 100%;
         border-collapse: collapse;
     }
-    /* Explicitly adding padding to table cells for the spacious look */
-    .scholarship-table th, .scholarship-table td {
-        padding: 8px 8px !important; 
+    
+    .custom-table th, .custom-table td {
+        padding: 8px 10px !important; 
         vertical-align: middle;
-        border: 1px solid #c8ccd0; /* Light borders between cells */
+        border: 1px solid #b1b3b6;
     }
-    .scholarship-table-head th {
-        background-color: #cce0ff !important; /* Light blue table header */
+    
+    .custom-table thead th {
+        background-color: #cfe2ff !important; /* Light Blue from image */
         color: #000;
         font-weight: 600;
-        border-bottom: 1px solid #c8ccd0;
+        border-bottom: none;
     }
-    .btn-custom-action {
-        background-color: #313384;
+    
+    /* Top Action Bar Buttons */
+    .btn-top-action {
+        background-color: #2c3182;
         color: white;
         border: none;
-        font-size: 14px;
-        padding: 6px 16px;
+        font-size: 16.5px;
+        padding: 7px 25.5px;
         border-radius: 4px;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
+        font-weight: 700;
     }
-    .btn-custom-action:hover {
-        background-color: #1e205e;
+    .btn-top-action:hover {
+        background-color: #1e225c;
         color: white;
     }
-    /* Custom Pagination Colors */
-    .custom-pagination .btn-primary {
-        background-color: #313384;
-        border-color: #313384;
+
+    /* View Students Button */
+    .btn-view-student {
+        background-color: #2c3182;
+        color: white;
+        border: none;
+        font-size: 14px;
+        padding: 6px 14px;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        text-decoration: none;
     }
-    .custom-pagination .btn-outline-primary {
-        color: #313384;
-        border-color: #cce0ff;
+    .btn-view-student:hover {
+        background-color: #1e225c;
+        color: white;
     }
-    .custom-pagination .btn-outline-primary:hover {
+
+    /* Pagination Box inside the card */
+    .custom-pagination {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 15px;
+    }
+    .page-btn {
+        background-color: #fff;
+        color: #2c3182;
+        border: 1px solid #cfe2ff;
+        padding: 6px 14px;
+        border-radius: 4px;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .page-btn.active {
+        background-color: #2c3182;
+        color: white;
+        border-color: #2c3182;
+    }
+    .page-btn:hover:not(.active) {
         background-color: #f0f4ff;
-        color: #313384;
     }
